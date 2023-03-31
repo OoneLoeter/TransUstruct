@@ -2,7 +2,7 @@
 
 
 
-#include "MyActor.h"
+#include "TransStruct/Public/MyActor.h"
 #include "Runtime/Core/Public/Containers/Map.h"
 #include "CoreMinimal.h"
 #include "UObject/TextProperty.h"
@@ -53,21 +53,20 @@ TMap<FString, FString> AMyActor::StructToMap(const void* Structptr, const UStruc
 	
 }
 
-void AMyActor::MapToStruct(const TMap<FString, FString>& Map, const UStruct* StructDefinition)
+void AMyActor::MapToStruct(const TMap<FString, FString>& Map,  UStruct* StructDefinition)
 {
 	void* StructPtr = FMemory::Malloc(StructDefinition->GetStructureSize());
 	StructDefinition->InitializeStruct(StructPtr);
-	for (TFieldIterator<const FProperty> PropertyIt(StructDefinition); PropertyIt; ++PropertyIt)
+	for (TFieldIterator< FProperty> PropertyIt(StructDefinition); PropertyIt; ++PropertyIt)
 	{
-		const FProperty* Property = *PropertyIt;
-		const FString* ValueStringPtr = Map.Find(Property->GetName());
-		if (ValueStringPtr != nullptr)
-		{
+		 FProperty* Property = *PropertyIt;
+		 FString ValueStringPtr = *Map.Find(Property->GetName());
+		
 			void* ValuePtr = Property->ContainerPtrToValuePtr<uint8>(StructPtr);
 			FString ValueString = *ValueStringPtr;
 			Property->ImportText(*ValueString, ValuePtr, PPF_None, nullptr);
 			//Property->ImportText_InContainer(*ValueString,ValuePtr,)
-		}
+		
 	}
 	
 }
@@ -75,13 +74,13 @@ void AMyActor::MapToStruct(const TMap<FString, FString>& Map, const UStruct* Str
 void AMyActor::MapToStructBP(FMyStruct TargetStruct, const TMap<FString, FString>& Map)
 {
 	
-	MapToStruct(Map,TestOutStruct.StaticStruct());
+	MapToStruct(Map,TargetStruct.StaticStruct());
 }
 
 TMap<FString, FString> AMyActor::StructToMapBP()
 {
 	TestStruct.F = "Sfss";
-	TestStruct.b = false;
+	TestStruct.b = true;
 	return StructToMap(&TestStruct,TestStruct.StaticStruct());
 }
 

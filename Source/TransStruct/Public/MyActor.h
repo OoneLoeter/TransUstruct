@@ -48,7 +48,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	TMap<FString, FString> StructToMapBP ();
 
-	void MapToStruct( const TMap<FString, FString>& Map, const UStruct* StructDefinition);
+	void MapToStruct( const TMap<FString, FString>& Map,  UStruct* StructDefinition);
 
 
 	UFUNCTION(BlueprintCallable)
